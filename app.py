@@ -17,17 +17,21 @@ def liste_liens(page):
     """doc liste_liens"""
     content = requests.get(base + page)
     print(base + page)
-    # dans la page
+    # select page
     soup = BeautifulSoup(content.text, 'html.parser')
-    # dans le body
-
-    # contient /wiki/
+    # select body
+    soup = soup.find('body')
+    # that contains /wiki/
     soup = soup.find_all(href=re.compile('/wiki/'))
     print(len(soup))
     liste = []
     for link in soup:
         liste.append(link.get('href'))
-    # enlever les doubles
+    # remove extra caracters in urls
+    for link in liste:
+        if (link.startswith('https:')):
+            link.replace('https:', '')
+    # remove doubles
     liste = list(set(liste))
     if (liste == []): return None
     return liste

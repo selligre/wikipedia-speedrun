@@ -1,5 +1,6 @@
 from pip._vendor import requests
 from bs4 import BeautifulSoup
+import json
 
 base = 'https://iceandfire.fandom.com/wiki/'
 source = ''
@@ -38,6 +39,35 @@ def liste_liens(page):
     return liste
 
 
-# main('House_Lannister', 'House_Stark')
-print(base + 'Petyr_Baelish')
-liste_liens('Petyr_Baelish')
+def svg_disco(dico, fichier):
+    with open(fichier, 'w') as f:
+        for key, value in dico.items():
+            f.write(f'{key}: {value}\n')
+
+
+def svg_disco_json(dico, fichier):
+    with open(fichier, 'w') as f:
+        json.dump(dico, f)
+
+
+def chg_disco(fichier):
+    result = {}
+    with open(fichier, 'r') as f:
+        for line in f:
+            key, value = line.strip().split(':')
+            result[key] = value
+    return result
+
+
+def chg_disco_json(fichier):
+    with open(fichier, 'r') as f:
+        return json.load(f)
+
+
+source = 'Petyr_Baelish'
+liste_source = liste_liens(source)
+dict = {source: tuple(liste_liens(source))}
+for link in liste_source:
+    dict.update({link: tuple(liste_liens(link))})
+svg_disco(dict, 'fichier_cible.txt')
+# print(chg_disco('fichier_cible.txt'))

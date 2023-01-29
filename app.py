@@ -1,6 +1,5 @@
 from pip._vendor import requests
 from bs4 import BeautifulSoup
-import re
 
 base = 'https://iceandfire.fandom.com/wiki/'
 source = ''
@@ -16,47 +15,29 @@ def main(source, cible):
 def liste_liens(page):
     """doc liste_liens(page)"""
     content = requests.get(base + page)
-    print(base + page)
     # CONTENT SELECTION
     # select body in page
-    soup = BeautifulSoup(content.text, 'html.parser').find('body')
-    # that contains /wiki/
-    soup = soup.find_all(href=re.compile('/wiki/'))
+    soup = BeautifulSoup(content.content, 'html.parser')
+    soup = soup.select('div.mw-parser-output a[href^="/wiki/"][title]')
     # LIST REDUCTION
     # get list from href
-    l = []
+    liste = []
     for link in soup:
-        l.append(link.get('href'))
-    print('len(l) with href ' + str(len(l)))
-    # remove 'https://iceandfire.fandom.com'
-    # for element in str(l):
-    #     if 'https://iceandfire.fandom.com' in element:
-    #         element.replace('https://iceandfire.fandom.com', '')
-    # print('len(l) without https ' + str(len(l)))
-    # remove elements from another website
-    # for element in l:
-    #     if 'https' in element:
-    #         l.remove(element)
-    # print('len(l) without foreign pages ' + str(len(l)))
-    # remove elements with ':'
-    print(l)
-    l = [element for element in l if ':' in element]
-    print('len(l) without ":" ' + str(len(l)))
-    print(l)
+        liste.append(link.attrs['href'])
     # remove '/wiki/'
-    # for element in l:
-    #     if '/wiki/' in element:
-    #         element.replace('/wiki/', '')
-    # print('len(l) without "/wiki/" ' + str(len(l)))
+    for element in range(len(liste)):
+        if '/wiki/' in liste[element]:
+            liste[element] = liste[element].replace('/wiki/', '')
     # remove doubles
-    # l = list(set(l))
-    # print('len(l) without doubles ' + str(len(l)))
+    liste = list(set(liste))
     # RETURN
     # if empty list, then there is no path, we must return None
-    if (l == []): return None
+    if not liste:
+        return None
     # else, return the list
-    return l
+    return liste
 
 
 # main('House_Lannister', 'House_Stark')
+print(base + 'Petyr_Baelish')
 liste_liens('Petyr_Baelish')

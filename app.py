@@ -64,10 +64,10 @@ def chg_disco_json(fichier):
         return json.load(f)
 
 
-# main('House_Lannister', 'House_Stark')
 source = 'Petyr_Baelish'
 liste_source = liste_liens(source)
-# dict = {source: tuple(liste_liens(source))}
-
-svg_disco_json(dict, 'fichier_cible.txt')
-# print(chg_disco_json('fichier_cible.txt'))
+dict = {source: tuple(liste_liens(source))}
+for link in liste_source:
+    dict.update({link: tuple(liste_liens(link))})
+svg_disco(dict, 'fichier_cible.txt')
+# print(chg_disco('fichier_cible.txt'))

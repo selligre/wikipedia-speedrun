@@ -24,26 +24,6 @@ def liste_liens(page):
     liste = []
     for link in soup:
         liste.append(link.attrs['href'])
-    # remove 'https://iceandfire.fandom.com'
-    for element in range(len(liste)):
-        if 'https://iceandfire.fandom.com' in liste[element]:
-            liste[element] = liste[element].replace('https://iceandfire.fandom.com', '')
-    # remove elements from another website
-    for element in range(len(liste) - 1):
-        if 'https' in liste[len(liste) - element - 1]:
-            liste.pop(element)
-    # remove elements with 'Local_Sitemap'
-    for element in range(len(liste) - 1):
-        if 'Local_Sitemap' in liste[len(liste) - element - 1]:
-            liste.pop(element)
-    # remove elements with ':' REFAIRE AVEC LA BOUCLE POP
-    liste = [element for element in liste if ':' not in element]
-    # remove elements with 'POV' REFAIRE AVEC LA BOUCLE POP
-    liste = [element for element in liste if 'POV' not in element]
-    # remove elements with '=' REFAIRE AVEC LA BOUCLE POP
-    liste = [element for element in liste if '=' not in element]
-    # remove elements with 'community'
-    liste = [element for element in liste if 'community' not in element]
     # remove '/wiki/'
     for element in range(len(liste)):
         if '/wiki/' in liste[element]:

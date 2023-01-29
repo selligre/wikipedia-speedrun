@@ -40,4 +40,4 @@ def liste_liens(page):
 
 # main('House_Lannister', 'House_Stark')
 print(base + 'Petyr_Baelish')
-print(liste_liens('Petyr_Baelish'))
+liste_liens('Petyr_Baelish')

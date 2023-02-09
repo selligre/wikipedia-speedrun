@@ -2,10 +2,6 @@ from pip._vendor import requests
 from bs4 import BeautifulSoup
 import json
 
-base = 'https://iceandfire.fandom.com/wiki/'
-# source = ''
-cible = ''
-
 
 def main(source_str, cible_str):
     """doc main"""
@@ -37,19 +33,19 @@ def liste_liens(page):
     return liste
 
 
-def svg_disco(dico, fichier):
+def svg_dico(dico, fichier):
     with open(fichier, 'w') as f:
         for key, value in dico.items():
             f.write(f'{key}: {value}\n')
 
 
-def svg_disco_json(dico, fichier):
+def svg_dico_json(dico, fichier):
     with open(fichier, 'w') as f:
         json_str = json.dumps(dico, indent=4)
         f.write(json_str)
 
 
-def chg_disco(fichier):
+def chg_dico(fichier):
     result = {}
     with open(fichier, 'r') as f:
         for line in f:
@@ -58,13 +54,15 @@ def chg_disco(fichier):
     return result
 
 
-def chg_disco_json(fichier):
+def chg_dico_json(fichier):
     with open(fichier, 'r') as f:
         return json.load(f)
 
 
-def build_wiki_from(d):
-    print(len(d.keys()))
+def build_wiki_from(d, start_page):
+    # print(len(d.keys()))
+    if len(d.keys()) == 0:
+        d.update({start_page: liste_liens(start_page)})
     for key in d.copy().keys():
         if d.copy()[key] is not None:
             for value in d.copy()[key]:
@@ -72,7 +70,7 @@ def build_wiki_from(d):
                     d.update({value: liste_liens(value)})
 
     if not is_wiki_finished(d):
-        build_wiki_from(d)
+        build_wiki_from(d, start_page)
     return d
 
 
@@ -86,14 +84,12 @@ def is_wiki_finished(dico):
     return result
 
 
+base = 'https://iceandfire.fandom.com/wiki/'
 source = 'Petyr_Baelish'
-# source = 'Daenerys_I_Targaryen'
-# source = 'Many-Faced_God'
-# liste_source = liste_liens(source)
+cible = ''
 wiki = {}
-wiki.update({source: liste_liens(source)})
-svg_disco_json(build_wiki_from(wiki), 'fichier_cible.json')
+svg_dico_json(build_wiki_from(wiki, source), 'fichier_cible.json')
 
 # les url Joffrey_I_Baratheon, Joffrey et Joffrey_Baratheon conduisent a la meme page, donc donnent la meme liste
 # 2658 pages dans le dico contre 2534 pages dans le wiki, donc 124 urls conduisent a des pages identiques
-# temps d'exec: 5min7sec
+# temps d'exec pour build le wiki depuis 'Petyr_Baelish': 5min7sec

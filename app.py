@@ -1,6 +1,9 @@
+import sys
+
 from pip._vendor import requests
 from bs4 import BeautifulSoup
 import json
+import math
 
 BASE = 'https://iceandfire.fandom.com/wiki/'
 
@@ -101,50 +104,43 @@ def is_wiki_finished(wiki):
     return result
 
 
-# wiki = {}
-# svg_dico_json(build_wiki_from_largeur(wiki, source), 'fichier_cible.json')
-
-# les url Joffrey_I_Baratheon, Joffrey et Joffrey_Baratheon conduisent a la meme page, donc donnent la meme liste
-# 2658 pages dans le dico contre 2534 pages dans le wiki, donc 124 urls conduisent a des pages identiques
-# temps d'exec pour build le wiki depuis 'Petyr_Baelish': 5min7sec, 2658 pages
-# temps d'exec pour build_largeur depuis 'Petyr_Baelish': 9min50sec, 2667 pages
-
 def plus_court_chemin(source, cible):
-    # wiki to search
     wiki = chg_dico_json('wiki.json')
-    # result list
-    result = []
-    found = False
-    result.append(source)
-    # go through wiki from source and not from the start
-    for key in wiki[source]:
-        for value in wiki[key]:
-            if value == cible:
-                result.append(key)
-                result.append(value)
-                found = True
-            if found:
-                break
-        if found:
-            break
-    if not found:
-        pass
-    # RETURN
-    if not found:
-        print('no path found')
+    parents = build_parents_from(source, wiki)
+    if cible not in parents:
         return None
-    return result
+    chemin = plus_court_chemin_rec(source, cible, parents)
+    return chemin
+
+
+def plus_court_chemin_rec(source, cible, parents):
+    if source == cible:
+        return [source]
+    chemin = plus_court_chemin_rec(source, parents[cible], parents)
+    chemin.append(cible)
+    return chemin
+
+
+def build_parents_from(source, wiki):
+    parents = {}
+    queue = [source]
+    explored = [source]
+    while queue:
+        page = queue.pop(0)
+        for link in wiki[page]:
+            if link not in explored:
+                parents[link] = page
+                queue.append(link)
+                explored.append(link)
+    return parents
 
 
 # wiki = {}
 # wiki = build_wiki_from(wiki, 'Petyr_Baelish')
 # svg_dico_json(wiki, 'wiki.json')
-
 source = 'Dorne'
-cible = 'Rhaego'
-cible2 = 'Nymeria'
-cible3 = 'Arya_Stark'
-cible4 = 'Needle'
-print(plus_court_chemin(source, cible3))
-# ['Dorne', 'House_Targaryen', Rhaego']
-# ['Dorne', 'Rhoynar', 'Nymeria', 'Arya_Stark', 'Needle']
+cible = 'Waif'
+# ['Dorne', 'House_Targaryen', 'Barristan_Selmy', 'Arya_Stark', 'Waif']
+cible2 = 'Aurion'
+# no path to 'Aurion'
+print(plus_court_chemin(source, cible))

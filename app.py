@@ -1,5 +1,4 @@
 import sys
-
 from pip._vendor import requests
 from bs4 import BeautifulSoup
 import json
@@ -133,6 +132,22 @@ def build_parents_from(source, wiki):
                 queue.append(link)
                 explored.append(link)
     return parents
+
+
+def nombre_caracteres(cible):
+    return len(cible)
+
+
+def nombre_voyelle(cible):
+    count = 0
+    for char in cible:
+        if char in ['a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U', 'y', 'Y']:
+            count += 1
+    return count
+
+
+def cout(cible):
+    return nombre_caracteres(cible) + 2 * nombre_voyelle(cible)
 
 
 # wiki = {}
